@@ -14,7 +14,7 @@ $timestamp = date("YmdHis");
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  <meta http-equiv="refresh" content="3; URL=zamowienia.php"
+  <meta http-equiv="refresh" content="3; URL=zamowienia.php"/>
   <title>Zapisywanie</title>
 </head>
 <body>
@@ -23,15 +23,14 @@ $timestamp = date("YmdHis");
 <div class="content">
   <div class="bye">
     <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-    <h1> Zapisywanie</h1>
+    <h1> Potwierdzanie</h1>
     <?php
     $conn = mysqli_connect("localhost:3306", "root", "root", "hurtownia");
     mysqli_query($conn, "INSERT INTO sprzedaze(IDklienta,DataSprzedazy,IDpracownika) VALUES (".$_SESSION['user_id'].", '".date('Y-m-d')."', 1)");
-    $result=mysqli_query($conn,"SELECT IDsprzedazy FROM sprzedaze WHERE IDklienta = '".$_SESSION['user_id']."' AND DataSprzedazy ='".date('Y-m-d')."'");
-    $order_id=mysqli_fetch_assoc($result);
+    $id=mysqli_fetch_assoc(mysqli_query($conn,"SELECT IDsprzedazy FROM sprzedaze ORDER BY IDsprzedazy DESC LIMIT 1"));
     for($i = 1; count($_SESSION['cart']) > $i; $i++){
       $bike=mysqli_fetch_assoc(mysqli_query($conn,"SELECT CenaJednostkowa FROM rowery WHERE IDroweru =".$_SESSION['cart'][$i]));
-      mysqli_query($conn,"INSERT INTO szczegolysprzedazy (IDsprzedazy, IDroweru, Ilosc, CenaJednostkowa) VALUES (".$order_id['IDsprzedazy'].", ".$_SESSION['cart'][$i].", ".$_SESSION['count'][(int)$_SESSION['cart'][$i]].", ". $bike['CenaJednostkowa'].")");
+      mysqli_query($conn,"INSERT INTO szczegolysprzedazy (IDsprzedazy, IDroweru, Ilosc, CenaJednostkowa) VALUES (".$id['IDsprzedazy'].", ".$_SESSION['cart'][$i].", ".$_SESSION['count'][(int)$_SESSION['cart'][$i]].", ". $bike['CenaJednostkowa'].")");
     }
 
     $_SESSION['cart'] = array();
